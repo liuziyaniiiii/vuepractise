@@ -91,15 +91,17 @@ methods: {
         }
       },()=>{}) */
 
-      this.$router.push({
+      const location = {
         name:'search',
-        params:{
-          keyword: keyword=== ''? undefined : keyword
-        },
-        query:{
-          keyword2: keyword.toUpperCase()
-        }
-      },undefined,()=>{})
+      }
+
+      if(keyword){
+        location.params = {keyword}
+      }
+      const{ query }= this.$route
+      location.query = query
+
+      this.$router.push(location)
 
       /*this.$router.push({
         name:'search',

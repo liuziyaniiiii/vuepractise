@@ -16,11 +16,12 @@ VueRouter.prototype.push = function (location, onComplete, onAbort) {
   console.log('push()', location, onComplete, onAbort)
   if (onComplete || onAbort) {
     originPush.call(this, location, onComplete, onAbort) 
+    
+  }else{
     return originPush.call(this, location).catch(() => {
       console.log('catch error')
-
       return new Promise(()=>{})
-    })   
+    })  
   }
 }
 

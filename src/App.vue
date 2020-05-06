@@ -13,6 +13,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import {reqBaseCategoryList, reqLogin} from '@/api'
 
+import { reqFloors } from '@/api'
+
 export default {
   name: 'App',
 
@@ -22,7 +24,10 @@ export default {
     // const result2 = await reqLogin('13700000000', '111111')
     // console.log('result2', result2)
 
-    // this.$store.dispatch('getBaseCategoryList')
+    const result = await reqFloors()
+    console.log('mock result' ,result)
+
+    this.$store.dispatch('getBaseCategoryList')
   },
 
   components: {
