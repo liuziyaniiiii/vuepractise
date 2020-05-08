@@ -24,8 +24,11 @@ export default {
     // const result2 = await reqLogin('13700000000', '111111')
     // console.log('result2', result2)
 
-    const result = await reqFloors()
-    console.log('mock result' ,result)
+    // const result = await reqFloors()
+    // console.log('mock result' ,result)
+
+    // this.$store.dispatch('getBanners')
+    // this.$store.dispatch('getFloors')
 
     this.$store.dispatch('getBaseCategoryList')
   },
