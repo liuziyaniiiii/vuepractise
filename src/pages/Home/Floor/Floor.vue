@@ -22,19 +22,7 @@
                 <img :src="floor.imgUrl" />
               </div>
               <div class="floorBanner">
-                <div class="swiper-container">
-                  <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="item in floor.carouselList" :key="item.id">
-                      <img :src="item.imgUrl">
-                    </div>
-                  </div>
-                  <!-- 如果需要分页器 -->
-                  <div class="swiper-pagination"></div>
-
-                  <!-- 如果需要导航按钮 -->
-                  <div class="swiper-button-prev"></div>
-                  <div class="swiper-button-next"></div>
-                </div>
+                <Carousel :carouselList="floor.carouselList"/>
               </div>
               <div class="split">
                 <span class="floor-x-line"></span>
@@ -55,7 +43,7 @@
                 </div>
 
                 <div class="floor-conver-pit">
-                  <img :src="floor.recommendList[4]" />
+                  <img :src="floor.recommendList[3]" />
                 </div>
               </div>
             </div>
@@ -67,6 +55,7 @@
 </template>
 
 <script>
+import Swiper from 'swiper'
     export default {
         name: 'Floor',
         props:{
