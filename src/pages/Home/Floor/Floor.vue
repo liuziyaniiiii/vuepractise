@@ -17,12 +17,12 @@
             <div class="floor-1">
               <div class="blockgary">
                 <ul class="jd-list">
-                  <li v-for="keyword in floor.keywords" :key="keyword">节能补贴</li>
+                  <li v-for="keyword in floor.keywords" :key="keyword">{{keyword}}</li>
                 </ul>
                 <img :src="floor.imgUrl" />
               </div>
               <div class="floorBanner">
-                <Carousel :carouselList="floor.carouselList"/>
+                <Carousel :carouselList="floor.carouselList" :autoplay="false"/>
               </div>
               <div class="split">
                 <span class="floor-x-line"></span>

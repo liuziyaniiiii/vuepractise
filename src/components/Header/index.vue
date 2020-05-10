@@ -38,8 +38,13 @@
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
-          <input type="text" id="autocomplete" class="input-error input-xxlarge" v-model="keyword" />
-          <button class="sui-btn btn-xlarge btn-danger" type="button" @click="search">搜索</button>
+          <input type="text" id="autocomplete" 
+          class="input-error input-xxlarge" 
+          v-model="keyword"
+          placeholder="关键字"
+           />
+          <button class="sui-btn btn-xlarge btn-danger" 
+           @click.prevent="search">搜索</button>
         </form>
       </div>
     </div>
@@ -51,8 +56,13 @@
     name: 'Header',
     data() {
       return {
-        keyword: 'hello'
+        keyword: ''
       }
+    },
+    mounted () {
+      this.$bus.$on('removeKeyword',()=>{
+        this.keyword = ''
+      })
     },
     methods: {
       search() {
@@ -105,7 +115,12 @@
         } = this.$route
         location.query = query
 
-        this.$router.push(location)
+        if(this.$route.path.indexOf('/search') ===0){
+          this.$router.replace(location)
+        }else{
+          this.$router.push(location)
+        }
+        // this.$router.push(location)
 
         /*this.$router.push({
           name:'search',
