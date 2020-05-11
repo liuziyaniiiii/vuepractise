@@ -40,8 +40,14 @@
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:isActive('1')}"
+                 @click="setOrder('1')">
+                  <a href="javascript:">
+                    综合
+                    <i class="iconfont" 
+                    :class="ordericon" 
+                    v-if="isActive('1')"></i>
+                  </a>
                 </li>
                 <li>
                   <a href="#">销量</a>
@@ -52,11 +58,13 @@
                 <li>
                   <a href="#">评价</a>
                 </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:isActive('2')}" @click="setOrder('2')">
+                  <a href="javascript:">
+                    价格
+                    <i class="iconfont" 
+                    :class="ordericon"
+                    v-if="isActive('2')"></i>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -66,9 +74,9 @@
               <li class="yui3-u-1-5" v-for="goods in productList.goodsList" :key="goods.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="javascript:">
+                    <router-link :to="`/detail/${goods.id}`">
                       <img :src="goods.defaultImg" />
-                    </a>
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -77,7 +85,7 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a href="javascript:">{{goods.title}}</a>
+                    <router-link :to="`/detail/${goods.id}`">{{goods.title}}</router-link>
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
@@ -90,6 +98,13 @@
               </li>
             </ul>
           </div>
+          <Pagination 
+            :currentPage="options.pageNo"
+            :currentSize="options.pageSize"
+            :total="productList.total"
+            :showPageNo="3"
+            @currentChange="handelcurrentChange"
+          />
           <div class="fr page">
             <div class="sui-pagination clearfix">
               <ul>
@@ -142,11 +157,11 @@
           category3Id: '', // 三级分类ID
           categoryName: '', // 分类名称
           keyword: '', // 关键字
-          trademark: '', // 品牌  "ID:品牌名称"
+          // trademark: '', // 品牌  "ID:品牌名称"
           props: [], // 商品属性的数组: ["属性ID:属性值:属性名"] 示例: ["2:6.0～6.24英寸:屏幕尺寸"]
-          order: '1:desc', // 排序方式  1: 综合,2: 价格 asc: 升序,desc: 降序  示例: "1:desc"
+          order: '1:asc', // 排序方式  1: 综合,2: 价格 asc: 升序,desc: 降序  示例: "1:desc"
           pageNo: 1, // 当前页码
-          pageSize: 10, // 每页数量
+          pageSize: 5, // 每页数量
         }
       }
     },
@@ -154,7 +169,10 @@
     computed: {
       ...mapState({
         productList: state => state.search.productList
-      })
+      }),
+      ordericon(){
+        return this.options.order.split(':')[1]==='desc'?'icondown':'iconup'
+      }
     },
 
     watch: {
@@ -170,31 +188,76 @@
 
     //初始化更新异步
     mounted() {
-      this.$store.dispatch('getProductList', this.options)
+      // this.$store.dispatch('getProductList', this.options)
+      this.getProductList()
     },
 
     methods: {
+      
+      getProductList(pageNo=1){
+        this.options.pageNo = pageNo
+        this.$store.dispatch('getProductList', this.options)
+      },
+
+
+      handelcurrentChange(currentPage){
+        this.options.pageNo = currentPage
+        this.$store.dispatch('getProductList', this.options)
+      },
+
+
+      isActive(orderFlag){
+        return this.options.order.indexOf(orderFlag)===0
+      },
+
+      setOrder(flag){
+
+       let [orderFlag,orderType] =  this.options.order.split(':')
+
+       if(flag===orderFlag){
+         orderType = orderType==='desc' ? 'asc' : 'desc'
+       }else{
+         orderFlag = flag
+         orderType = 'desc'
+       }
+
+        this.options.order = orderFlag + ':' + orderType
+        // this.$store.dispatch('getProductList', this.options)
+        this.getProductList()
+      },
 
       addProp(attrId,value,attrName){
         const prop = `${attrId}:${value}:${attrName}`
         if(this.options.props.indexOf(prop)!== -1) return
         this.options.props.push(prop)
-        this.$store.dispatch('getProductList', this.options)
+        // this.$store.dispatch('getProductList', this.options)
+        this.getProductList()
       },
       removeProp(index){
         this.options.props.splice(index,1)
-        this.$store.dispatch('getProductList', this.options)
+        // this.$store.dispatch('getProductList', this.options)
+        this.getProductList()
       },
 
       searchTrademark(trademark){
-        this.options.trademark = trademark
-        this.$store.dispatch('getProductList', this.options)
+        //this.options.trademark = trademark
+        //this.$store.dispatch('getProductList', this.options)
+        if(!this.options.hasOwnProperty('trademark')){
+          this.$set(this.options,'trademark',trademark)
+        }else{
+          this.options.trademark = trademark
+        }
+        // this.$store.dispatch('getProductList', this.options)
+        this.getProductList()
       },
 
       removeTrademark(){
-        this.options.trademark = ''
-        this.$store.dispatch('getProductList', this.options)
-      },
+        //this.options.trademark = ''
+        //this.$store.dispatch('getProductList', this.options)
+        this.$delete(this.options,'trademark')
+        // this.$store.dispatch('getProductList', this.options)
+        this.getProductList()
+     },
 
 
       removeCategory(){

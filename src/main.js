@@ -6,12 +6,14 @@ import router from './router'
 import store from './store'
 import TypeNav from '@/components/TypeNav'
 import Carousel from '@/components/Carousel'
+import Pagination from '@/components/Pagination'
 import './mock/mockServer'
 
 Vue.config.productionTip = false
 
 Vue.component('TypeNav',TypeNav)
 Vue.component('Carousel',Carousel)
+Vue.component('Pagination',Pagination)
 
 // Vue.prototype.$bus = new Vue()
 

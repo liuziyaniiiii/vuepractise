@@ -30,7 +30,12 @@ const actions = {
 }
 
 const getters = {
-
+  trademarkList(state){
+    return state.productList.trademarkList || []
+  },
+  attrsList(state){
+    return state.productList.attrsList || []
+  }
 }
 
 export default {
