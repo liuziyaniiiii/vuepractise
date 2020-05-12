@@ -17,7 +17,7 @@ export default[
     },
     {
         name:'detail',
-        path:'/detail/:id',
+        path:'/detail/:skuId',
         component:Detail,
     },
     {

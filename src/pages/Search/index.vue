@@ -280,13 +280,13 @@
       },
       updateOptions() {
         const {
-          categoryName,
-          category1Id,
-          category2Id,
-          category3Id
+          categoryName='',
+          category1Id='',
+          category2Id='',
+          category3Id=''
         } = this.$route.query
         const {
-          keyword
+          keyword=''
         } = this.$route.params
         this.options = {
           ...this.options,

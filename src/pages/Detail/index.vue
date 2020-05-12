@@ -7,19 +7,20 @@
     <section class="con">
       <!-- 导航路径区域 -->
       <div class="conPoin">
-        <span>手机、数码、通讯</span>
-        <span>手机</span>
-        <span>Apple苹果</span>
-        <span>iphone 6S系类</span>
+        <span>{{categoryView.category1Name}}</span>
+        <span>{{categoryView.category2Name}}</span>
+        <span>{{categoryView.category3Name}}</span>
+        <!-- <span>iphone 6S系类</span> -->
       </div>
       <!-- 主要内容区域 -->
       <div class="mainCon">
         <!-- 左侧放大镜区域 -->
         <div class="previewWrap">
           <!--放大镜效果-->
-          <Zoom />
+          <Zoom v-if="skuImageList.length>0" :bigUrl="skuImageList[currentIndex].imgUrl"
+           :imgUrl="skuImageList[currentIndex].imgUrl"/>
           <!-- 小图列表 -->
-          <ImageList />
+          <ImageList @currentChange="handleCurrentChange"/>
         </div>
         <!-- 右侧选择区域布局 -->
         <div class="InfoWrap">
@@ -347,15 +348,38 @@
 </template>
 
 <script>
+  import {mapState,mapGetters} from 'vuex'
   import ImageList from './ImageList/ImageList'
   import Zoom from './Zoom/Zoom'
 
   export default {
     name: 'Detail',
+
+    data () {
+      return {
+        currentIndex:0
+      }
+    },
+
+    computed: {
+      ...mapState({
+        detailInfo: state => state.detail.detailInfo
+      }),
+      ...mapGetters(['categoryView','skuInfo', 'skuImageList'])
+    },
     
+    mounted(){
+      this.$store.dispatch('getDetailInfo', this.$route.params.skuId)
+    },
+
     components: {
       ImageList,
       Zoom
+    },
+    methods: {
+      handleCurrentChange(index){
+        this.currentIndex = index
+      }
     }
   }
 </script>

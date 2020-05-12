@@ -21,6 +21,13 @@ const actions = {
   获取商品列表数据的异步action
   */
   async getProductList ({commit}, searchParams) {
+    searchParams = {...searchParams}
+    Object.keys(searchParams).forEach(key =>{
+      if(searchParams[key]===''){
+        delete searchParams[key]
+      }
+    })
+
     const result = await reqProductList(searchParams)
     if (result.code===200) {
       const productList = result.data
