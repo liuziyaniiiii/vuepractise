@@ -25,8 +25,8 @@
         <!-- 右侧选择区域布局 -->
         <div class="InfoWrap">
           <div class="goodsDetail">
-            <h3 class="InfoName">Apple iPhone 6s（A1700）64G玫瑰金色 移动通信电信4G手机</h3>
-            <p class="news">推荐选择下方[移动优惠购],手机套餐齐搞定,不用换号,每月还有花费返</p>
+            <h3 class="InfoName">{{skuInfo.skuName}}</h3>
+            <p class="news">{{skuInfo.skuDesc}}</p>
             <div class="priceArea">
               <div class="priceArea1">
                 <div class="title">价&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;格</div>
@@ -65,39 +65,24 @@
           <div class="choose">
             <div class="chooseArea">
               <div class="choosed"></div>
-              <dl>
-                <dt class="title">选择颜色</dt>
-                <dd changepirce="0" class="active">金色</dd>
-                <dd changepirce="40">银色</dd>
-                <dd changepirce="90">黑色</dd>
-              </dl>
-              <dl>
-                <dt class="title">内存容量</dt>
-                <dd changepirce="0" class="active">16G</dd>
-                <dd changepirce="300">64G</dd>
-                <dd changepirce="900">128G</dd>
-                <dd changepirce="1300">256G</dd>
-              </dl>
-              <dl>
-                <dt class="title">选择版本</dt>
-                <dd changepirce="0" class="active">公开版</dd>
-                <dd changepirce="-1000">移动版</dd>
-              </dl>
-              <dl>
-                <dt class="title">购买方式</dt>
-                <dd changepirce="0" class="active">官方标配</dd>
-                <dd changepirce="-240">优惠移动版</dd>
-                <dd changepirce="-390">电信优惠版</dd>
+              <dl v-for="(attr,index) in spuSaleAttrList" :key="attr.id">
+                <dt class="title">{{attr.saleAttrName}}</dt>
+                <dd v-for="(value,index) in attr.spuSaleAttrValueList"
+                 :key="value.id" :class="{active: value.isChecked==='1'}"
+                  @click="selectValue(value,attr.spuSaleAttrValueList)"
+                 >
+                 {{value.saleAttrValueName}}
+                </dd>
               </dl>
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt">
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input autocomplete="off" class="itxt" v-model="skuNum">
+                <a href="javascript:" class="plus" @click="skuNum += 1">+</a>
+                <a href="javascript:" class="mins" @click="skuNum=skuNum>1?skuNum-1:1">-</a>
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a href="javascript:" @click="addToCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -357,7 +342,8 @@
 
     data () {
       return {
-        currentIndex:0
+        currentIndex:0,
+        skuNum:1
       }
     },
 
@@ -365,7 +351,7 @@
       ...mapState({
         detailInfo: state => state.detail.detailInfo
       }),
-      ...mapGetters(['categoryView','skuInfo', 'skuImageList'])
+      ...mapGetters(['categoryView','skuInfo', 'skuImageList','spuSaleAttrList'])
     },
     
     mounted(){
@@ -377,8 +363,49 @@
       Zoom
     },
     methods: {
+
+      async addToCart(){
+        const skuId = this.$route.params.skuId
+        const skuNum = this.skuNum
+
+        // 第一种
+        // this.$store.dispatch('addToCart',{skuId,skuNum,callBack:this.callBack})
+
+        // 第二种
+        // const errorMsg = await this.$store.dispatch('addToCart2',{skuId,skuNum})
+        // if(errorMsg){
+        //   alert(errorMsg)
+        // }else{
+        //   alert('添加成功,准备自动跳转到成功的界面')
+        // }
+
+        // 第三种
+        try{
+          await this.$store.dispatch('addToCart3',{skuId,skuNum})
+          alert('添加成功,准备自动跳转到成功的界面')
+        }catch(error){
+          alert(error.message)
+        }
+      },
+
+      callBack(errorMsg){
+        if(errorMsg){
+          alert('添加失败了')
+        }else{
+          alert('添加成功,准备自动跳转到成功的界面')
+        }
+      },
+
+
       handleCurrentChange(index){
         this.currentIndex = index
+      },
+
+      selectValue(value,valueList){
+        if(value.isChecked!==1){
+          valueList.forEach(v => v.isChecked = '0')
+          value.isChecked = '1'
+        }
       }
     }
   }

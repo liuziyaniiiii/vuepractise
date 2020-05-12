@@ -30,7 +30,8 @@
 
 
         const {offsetX,offsetY} = event
-        console.log(offsetX,offsetY)
+        // 触发次数过多
+        // console.log(offsetX,offsetY)
 
         const maskWidth = this.maskWidth
         // const maskWidth = this.$refs.mask.clientWidth
