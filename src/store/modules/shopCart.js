@@ -1,4 +1,4 @@
-import {reqCartList,reqCheckCartItem,reqAddToCart,reqDeleteCarItem} from '@/api'
+import {reqCartList,reqCheckCartItem,reqAddToCart,reqDeleteCartItem } from '@/api'
 
 
 export default{
@@ -11,11 +11,20 @@ export default{
         },
     },
     actions:{
-        async deleteCarItem({commit},{skuId}){
-            const result = await reqDeleteCarItem(skuId)
+        async deleteCartItem (context,skuId){
+            const result = await reqDeleteCartItem (skuId)
             if(result.code!==200){
                 throw new Error(result.message || '删除成功');
             }
+        },
+        async deleteCheckedCartItems({state,dispatch}){
+            const promises = state.cartList.reduce((pre,item)=>{
+                if(item.isChecked===1){
+                    pre.push(dispatch('deleteCartItem',item.skuId))
+                }
+                return pre
+            },[])
+            return Promise.all(promises)
         },
 
         async getcartList({commit}){
@@ -69,18 +78,13 @@ export default{
             //     }
             // },
         
-            async addToCart3({commit},{skuId,skuNum}){
-                const result = await reqAddToCart(skuId,skuNum)
-                if(result.code===200){
-                    // console.log('添加成功')
-                    return ''
-                }else{
-                    // console.log('添加失败')
-                    
-                    throw new Error('添加购物车失败')
-                }
+        async addToCart3({commit},{skuId,skuNum}){
+            const result = await reqAddToCart(skuId,skuNum)
+            if(result.code!==200){
+                throw new Error('添加购物车失败')    
             }
-        },
+        }    
+    },
     // },
     getters: {
         totalCount(state){

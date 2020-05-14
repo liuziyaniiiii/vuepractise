@@ -8,13 +8,6 @@ export function reqBaseCategoryList(){
     })
 }
 
-export function reqLogin(mobile,password){
-    return ajax({
-        method:'POST',
-        url: '/user/passport/login',
-        data:{mobile,password}
-    })
-} 
 
 
 
@@ -60,4 +53,24 @@ export const reqCartList =() => ajax('/cart/cartList')
 export const reqCheckCartItem = (skuId,isChecked) =>ajax(`/cart/checkCart/${skuId}/${isChecked}`)
 
 //删除购物车商品/cart/deleteCart/{skuId}
-export const reqDeleteCarItem = (skuId)=>ajax.delete(`/cart/deleteCart/${skuId}`)
+export const reqDeleteCartItem = (skuId)=>ajax.delete(`/cart/deleteCart/${skuId}`)
+
+//登陆
+export function reqLogin(mobile,password){
+    return ajax({
+        method:'POST',
+        url: '/user/passport/login',
+        data:{mobile,password}
+    })
+} 
+
+//注册 /api/user/passport/register
+// export const reqRegister = (userInfo)=>ajax.post(`/user/passport/register`,userInfo)
+export const reqRegister = (userInfo)=>ajax.post(`/user/passport/register`,userInfo)
+
+
+/* 
+退出登陆
+/api/user/passport/logout
+*/
+export const reqLogout = () => ajax('/user/passport/logout')

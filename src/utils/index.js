@@ -8,6 +8,13 @@ export function getUserTempId(){
         userTempId = uuidv4()
         localStorage.setItem('USER_TEMP_ID_KEY',userTempId)
     }
-
     return userTempId
+}
+
+export function saveUserInfo(userInfo){
+    localStorage.setItem('USER_INFO_KEY',JSON.stringify(userInfo))
+}
+
+export function getUserInfo(){
+    return JSON.parse(localStorage.getItem('USER_INFO_KEY')) || {}
 }

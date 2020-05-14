@@ -25,7 +25,7 @@
           <li class="cart-list-con5">
             <a href="javascript:void(0)" class="mins" @click="changeItemNum(item,-1)">-</a>
             <input autocomplete="off" type="text" class="itxt" :value="item.skuNum"
-              @change="changeItemNum(item,$event.target.value*1 - item.skuNum.$event)">
+              @change="changeItemNum(item,$event.target.value*1 - item.skuNum,$event)">
             <a href="javascript:void(0)" class="plus" @click="changeItemNum(item,1)">+</a>
           </li>
           <li class="cart-list-con6">
@@ -33,7 +33,7 @@
           </li>
           <li class="cart-list-con7">
             <!-- <router-link class="sindelet" to="deleteCarItem(item)">删除</router-link> -->
-            <a href="#none" class="sindelet">删除</a>
+            <a href="javascript:" class="sindelet" @click="deleteCartItem(item)">删除</a>
             <br>
             <a href="#none">移到收藏</a>
           </li>
@@ -46,7 +46,7 @@
         <span>全选</span>
       </div>
       <div class="option">
-        <a href="#none">删除选中的商品</a>
+        <a href="javascript:" @click="deleteCheckedCartItems">删除选中的商品</a>
         <a href="#none">移到我的关注</a>
         <a href="#none">清除下柜商品</a>
       </div>
@@ -92,11 +92,11 @@
           // return this.cartList.find(item => item.isChecked!==1)===undefined
           // return !this.cartList.find(item => item.isChecked!==1)
           // return !this.cartList.some(item=>item.isChecked===0)
-          return this.cartList.every(item => item.isChecked === 1)
+          return this.cartList.every(item => item.isChecked === 1) && this.cartList >0
         },
         async set(value) {
           try {
-            await this.$store.dispatch('checkAllCartItem', value)
+            const result = await this.$store.dispatch('checkAllCartItem', value)
             this.$store.dispatch('getcartList')
           } catch (error) {
             alert(error.message)
@@ -109,10 +109,10 @@
       this.$store.dispatch('getcartList')
     },
     methods: {
-      changeItemNum(item, numChange, event) {
+      async changeItemNum(item, numChange, event) {
         if (item.skuNum + numChange > 0) {
           try {
-            this.$store.dispatch('addToCart3', {
+            await this.$store.dispatch('addToCart3', {
               skuId: item.skuId,
               skuNum: numChange
             })
@@ -140,15 +140,26 @@
           alert(error.message)
         }
       },
-      async deleteCarItem(item) {
-        const skuId = item.skuId
-        try {
-          await this.$store.dispatch('deleteCarItem', {
-            skuId
-          })
+      async deleteCartItem(item) {
+        
+        if(window.confirm(`确定删除${item.skuName}吗?`)){
+          try {
+          await this.$store.dispatch('deleteCartItem', item.skuId)
           this.$store.dispatch('getcartList')
-        } catch (error) {
+          } catch (error) {
           alert(error.message)
+          }
+        }
+      },
+      async deleteCheckedCartItems() {
+        
+        if(window.confirm(`确定删除吗?`)){
+          try {
+          await this.$store.dispatch('deleteCheckedCartItems')
+          this.$store.dispatch('getcartList')
+          } catch (error) {
+          alert(error.message)
+          }
         }
       }
     }
