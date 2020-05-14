@@ -1,7 +1,7 @@
 import axios from 'axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-
+import store from '@/store'
 
 // 配置不显示右上角的旋转进度条, 只显示水平进度条
 NProgress.configure({ showSpinner: false }) 
@@ -16,6 +16,9 @@ instance.interceptors.request.use(config =>{
     // console.log('请求拦截器执行')
 
     NProgress.start() //请求进度条
+
+
+    config.headers.userTempId = store.state.user.userTempId
     return config
 })
 //axios响应拦截器

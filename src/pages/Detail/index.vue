@@ -382,7 +382,13 @@
         // 第三种
         try{
           await this.$store.dispatch('addToCart3',{skuId,skuNum})
-          alert('添加成功,准备自动跳转到成功的界面')
+          // alert('添加成功,准备自动跳转到成功的界面')
+
+          window.sessionStorage.setItem('SKU_INFO_KEY',JSON.stringify(this.skuInfo))
+          this.$router.push({
+            path:'/addcartsuccess',
+            query:{skuNum}
+          })
         }catch(error){
           alert(error.message)
         }

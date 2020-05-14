@@ -3,6 +3,8 @@ import Search from '@/pages/Search'
 import Detail from '@/pages/Detail'
 import Register from '@/pages/Register'
 import Login from '@/pages/Login'
+import AddCartSuccess from '@/pages/AddCartSuccess'
+import ShopCart from '@/pages/ShopCart'
 
 export default[
     {
@@ -19,6 +21,14 @@ export default[
         name:'detail',
         path:'/detail/:skuId',
         component:Detail,
+    },
+    {
+        path:'/addcartsuccess',
+        component:AddCartSuccess
+    },
+    {
+        path:'/shopcart',
+        component:ShopCart
     },
     {
         path:'/login',
