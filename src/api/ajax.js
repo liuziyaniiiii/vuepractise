@@ -17,8 +17,14 @@ instance.interceptors.request.use(config =>{
 
     NProgress.start() //请求进度条
 
-
+ /*  5. 每次请求都携带一个userTempId请求头, 数据值在state中 */
     config.headers.userTempId = store.state.user.userTempId
+
+  /* 6. 每次请求(已登陆)都携带一个token请求头, 数据值在state中 */
+    const token = store.state.user.userInfo.token
+    if (token) {
+        config.headers['token'] = token
+    }
     return config
 })
 //axios响应拦截器

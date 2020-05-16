@@ -5,43 +5,112 @@ import Register from '@/pages/Register'
 import Login from '@/pages/Login'
 import AddCartSuccess from '@/pages/AddCartSuccess'
 import ShopCart from '@/pages/ShopCart'
+import Center from '@/pages/Center'
+import Pay from '@/pages/Pay'
+import PaySuccess from '@/pages/PaySuccess'
+import Trade from '@/pages/Trade'
+import MyOrder from '@/pages/Center/MyOrder'
+import GroupBuy from '@/pages/Center/GroupBuy'
 
-export default[
-    {
-        path:'/',
+export default [{
+        path: '/',
         component: Home
     },
     {
-        name:'search',
-        path:'/search/:keyword?',
+        name: 'search',
+        path: '/search/:keyword?',
         component: Search,
-        props:route => ({keyword3: route.params.keyword, keyword4: route.query.keyword2})
+        props: route => ({
+            keyword3: route.params.keyword,
+            keyword4: route.query.keyword2
+        })
     },
     {
-        name:'detail',
-        path:'/detail/:skuId',
-        component:Detail,
+        name: 'detail',
+        path: '/detail/:skuId',
+        component: Detail,
     },
     {
-        path:'/addcartsuccess',
-        component:AddCartSuccess
+        path: '/addcartsuccess',
+        component: AddCartSuccess,
+        beforeEnter(to, from, next) {
+            const skuNum = to.query.skuNum
+            const skuInfo = JSON.parse(window.sessionStorage.getItem('SKU_INFO_KEY'))
+            if (skuNum && skuInfo) {
+                next()
+            } else {
+                next('/')
+            }
+        }
     },
     {
-        path:'/shopcart',
-        component:ShopCart
+        path: '/shopcart',
+        component: ShopCart
     },
     {
-        path:'/login',
+        path: '/login',
         component: Login,
-        meta:{
-            isHideFooter:true
+        meta: {
+            isHideFooter: true
         }
     },
     {
-        path:'/register',
+        path: '/register',
         component: Register,
-        meta:{
-            isHideFooter:true
+        meta: {
+            isHideFooter: true
         }
+    },
+    {
+        path: '/trade',
+        component: Trade,
+        beforeEnter(to,from,next){
+            if(from.path==='/shopcart'){
+                next()
+            }else{
+                next('/shopcart')
+            }
+        }
+    },
+    {
+        path: '/pay',
+        component: Pay,
+        beforeEnter(to,from,next){
+            if(from.path==='/trade'){
+                next()
+            }else{
+                next('/trade')
+            }
+        }
+    },
+    {
+        path: '/paysuccess',
+        component: PaySuccess,
+        beforeEnter(to,from,next){
+            if(from.path==='/pay'){
+                next()
+            }else{
+                next('/pay')
+            }
+        }
+    },
+    {
+        path: '/center',
+        component: Center,
+        children: [{
+                // path: '/center/myorder',
+                path: 'myorder',
+                component: MyOrder,
+            },
+            {
+                path: 'groupbuy',
+                component: GroupBuy,
+            },
+
+            {
+                path: '',
+                redirect: 'myorder'
+            }
+        ]
     },
 ]

@@ -8,6 +8,11 @@ import TypeNav from '@/components/TypeNav'
 import Carousel from '@/components/Carousel'
 import Pagination from '@/components/Pagination'
 import './mock/mockServer'
+import './validate'
+import * as API from '@/api'
+
+
+Vue.prototype.$API = API
 
 Vue.config.productionTip = false
 

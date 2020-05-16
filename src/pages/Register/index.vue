@@ -6,41 +6,64 @@
         <span class="go">我有账号，去 <router-link to="/login">登陆</router-link>
         </span>
       </h3>
-      <div class="content">
-        <label>手机号:</label>
-        <input type="text" 
-        placeholder="请输入你的手机号"
-        v-model="mobile"
-         >
-        <!-- <span class="error-msg">错误提示信息</span> -->
-      </div>
-      <div class="content">
-        <label>验证码:</label>
-        <input type="text" placeholder="请输入验证码" v-model="code">
-        <!-- <img ref="code" src="http://182.92.128.115/api/user/passport/code" alt="code"> -->
-        <img ref="code" src="/api/user/passport/code" 
-        alt="code" @click="updateCode">
-        <a href="javascript:" @click="updateCode">换一换</a>
-        <!-- <span class="error-msg">错误提示信息</span> -->
-      </div>
-      <div class="content">
-        <label>登录密码:</label>
-        <input type="text" placeholder="请输入你的登录密码" v-model="password">
-        <!-- <span class="error-msg">错误提示信息</span> -->
-      </div>
-      <div class="content">
-        <label>确认密码:</label>
-        <input type="text" placeholder="请输入确认密码" v-model="password2">
-        <!-- <span class="error-msg">错误提示信息</span> -->
-      </div>
-      <div class="controls">
-        <input name="m1" type="checkbox" v-model="isAgree">
-        <span>同意协议并注册《尚品汇用户协议》</span>
-        <!-- <span class="error-msg">错误提示信息</span> -->
-      </div>
-      <div class="btn">
-        <button @click="register">完成注册</button>
-      </div>
+      <ValidationObserver ref="form">
+        <form>
+          <div class="content">
+            <label>手机号:</label>
+            <ValidationProvider name="手机号" :rules="{required: true, regex: /^1\d{10}$/}">
+              <template slot-scope="{errors, classes}">
+                <input type="text" placeholder="请输入你的手机号" v-model="mobile" :class="classes">
+                <span class="error-msg">{{errors[0]}}</span>
+              </template>
+            </ValidationProvider>
+          </div>
+          
+          <div class="content">
+            <label>验证码:</label>
+
+            <ValidationProvider name="验证码" :rules="{required: true, regex: /^.{4}$/}">
+              <template slot-scope="{errors, classes}">
+                <input type="text" placeholder="请输入验证码" v-model="code" :class="classes">
+                <!-- http://182.92.128.115 -->
+                <img ref="code" src="/api/user/passport/code" alt="code" @click="updateCode">
+                <span class="error-msg">{{ errors[0] }}</span>
+              </template>
+            </ValidationProvider>
+
+          </div>
+          <div class="content">
+            <label>登录密码:</label>
+            <ValidationProvider name="密码" :rules="{required: true, min: 6, max: 10}">
+              <template slot-scope="{ errors, classes }">
+                <input type="password" placeholder="请输入你的登录密码" v-model="password" :class="classes">
+                <span class="error-msg">{{ errors[0] }}</span>
+              </template>
+            </ValidationProvider>
+          </div>
+          <div class="content">
+            <label>确认密码:</label>
+            <ValidationProvider name="确认密码" :rules="{required: true, is: password}">
+              <template slot-scope="{ errors,classes}">
+                <input type="password" placeholder="请输入确认密码" v-model="password2" :class="classes">
+                <span class="error-msg">{{ errors[0] }}</span>
+              </template>
+            </ValidationProvider>
+          </div>
+          <div class="controls">
+            <ValidationProvider name="协议" :rules="{oneOf: [true]}">
+              <template slot-scope="{ errors,classes}">
+                <input name="m1" type="checkbox" v-model="isAgree" :class="classes">
+                <span>同意协议并注册《尚品汇用户协议》</span>
+                <span class="error-msg">{{errors[0]}}</span>
+              </template>
+            </ValidationProvider>
+          </div>
+
+          <div class="btn">
+            <button @click.prevent="register">完成注册</button>
+          </div>
+        </form>
+      </ValidationObserver>
     </div>
 
     <!-- 底部 -->
