@@ -7,8 +7,14 @@
           <span class="success-info">订单提交成功，请您及时付款，以便尽快为您发货~~</span>
         </h4>
         <div class="paymark">
-          <span class="fl">请您在提交订单<em class="orange time">4小时</em>之内完成支付，超时订单会自动取消。订单号：<em>145687</em></span>
-          <span class="fr"><em class="lead">应付金额：</em><em class="orange money">￥17,654</em></span>
+          <span class="fl">请您在提交订单<em class="orange time">4小时</em>
+          之内完成支付，超时订单会自动取消。订单号：
+          <!-- <em>{{$route.query.orderId}}</em> -->
+          <em>{{orderId}}</em>
+          </span>
+          <span class="fr"><em class="lead">应付金额：</em>
+          <em class="orange money">￥{{payInfo.totalFee}}</em>
+          </span>
         </div>
       </div>
       <div class="checkout-info">
@@ -65,7 +71,7 @@
         <div class="hr"></div>
 
         <div class="submit">
-          <router-link class="btn" to="/paysuccess">立即支付</router-link>
+          <a href="javascript:" class="btn" @click="pay">立即支付</a>
         </div>
         <div class="otherpay">
           <div class="step-tit">
@@ -82,8 +88,88 @@
 </template>
 
 <script>
+import QRCode from 'qrcode'
   export default {
     name: 'Pay',
+    props:['orderId'],
+
+    computed: {
+      payInfo(){
+        return this.$store.state.order.payInfo
+      }
+    },
+
+    mounted () {
+      this.$store.dispatch('getPayInfo',this.orderId)
+    },
+    methods: {
+      pay () {
+        console.dir(this.$msgbox)
+        // 使用qrcode生成二维码图片
+        QRCode.toDataURL(this.payInfo.codeUrl)
+          .then(url => { // url就是二维码图片
+            console.log(url)
+            // 显示支付二维码界面
+            this.$alert(`<img src="${url}">`, '请使用微信扫码支付', {
+              dangerouslyUseHTMLString: true, // 解析内容中的html标签文本
+              center: true, // 居中显示
+              showClose: false, // 不显示右上角的关闭
+              showCancelButton: true, // 显示取消按钮
+              cancelButtonText: '支付中遇到了问题',
+              confirmButtonText: '我已成功支付'
+            })
+              .then(() => { // 点击已支付
+                // 清除定时器
+                clearInterval(this.intervalId)
+                // 跳转到支付成功的界面
+                this.$router.push('/paysuccess')
+              }).catch(() => { // 点击支付有问题
+                // 清除定时器
+                clearInterval(this.intervalId)
+                // 显示警告提示
+                this.$message({
+                  message: '找尚硅谷前台!',
+                  type: 'warning'
+                })
+              })
+
+            // 每隔3S获取去获取订单支付的状态, 
+            this.intervalId = setInterval(() => {
+            this.$API.reqOrderStatus(this.orderId)
+              .then(result => {
+                console.log('result', result)
+                // 如果已支付, 自动关闭对话框并跳转到成功页面
+                if (result.code===200) {
+                  // 关闭对话框
+                  this.$msgbox.close()
+                  // 跳转到成功页面
+                  this.$router.push('/paysuccess')
+                  // 清除定时器
+                  clearInterval(this.intervalId)
+                  // 提示支付成功
+                  this.$message.success('支付成功')
+                  // 删除购物车中所勾选的购物项数据
+                  this.$store.dispatch('deleteCheckedCartItems')
+                }
+              })
+              .catch(error => {
+                // 清除定时器
+                clearInterval(this.intervalId)
+                // 显示警告提示
+                this.$message({
+                  message: '获取订单状态失败!',
+                  type: 'error'
+                })
+              })
+              
+            }, 3000)
+            
+          })
+          .catch(err => {
+            alert('生成支付二维码失败!')
+          })
+      }
+    }
   }
 </script>
 

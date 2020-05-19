@@ -10,6 +10,7 @@ import Pagination from '@/components/Pagination'
 import './mock/mockServer'
 import './validate'
 import * as API from '@/api'
+import './elements'
 
 
 Vue.prototype.$API = API
